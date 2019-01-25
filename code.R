@@ -1,6 +1,7 @@
 # To-do
 #   Finish converting the date (gives errors). Alternative - just substring the year (but that's meh)
 #   Plots without outliers
+#   More work on the ratingsTable
 
 # Ideas
 # Sentiment analisys of the revievs, take the average/partial sums, and put it into mainTable
@@ -131,6 +132,12 @@ grid.arrange(p1, p2, p3, p4, nrow = 2)
 ggplot(mainTable, aes(y = Reviews.Count, x = seq(1,length(mainTable$Reviews.Count)))) + geom_point()
 
 
+
+
+
+######EXPORT CLEAN DATA######
+write.csv(mainTable, file = "data/clean_googleplaystore.csv", row.names = FALSE)
+write.csv(ratingsTable, file = "data/clean_googleplaystore_user_reviews.csv", row.names = FALSE)
 
 
 
