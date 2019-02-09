@@ -13,8 +13,13 @@
 # Install packages
 # install.packages("ggplot2")
 # install.packages("gridExtra")
+# install.packages("dplyr")
+# install.packages("tidyr")
+
 
 # Load them
+library(dplyr)
+library(tidyr)
 library(ggplot2)
 library(gridExtra)
 
@@ -33,10 +38,8 @@ str(mainTable)
 summary(mainTable)
 
 # Renaming columns
-names(mainTable)[names(mainTable) == 'Reviews'] <- 'Reviews.Count'
-names(mainTable)[names(mainTable) == 'Current.Ver'] <- 'Current.Software.Version'
-names(mainTable)[names(mainTable) == 'Android.Ver'] <- 'Android.Version'
-
+columnsToRename = c('Reviews' = 'Reviews.Count', 'Current.Ver' = 'Current.Software.Version', 'Android.Ver' = 'Android.Version')
+mainTable <- mainTable %>% plyr::rename(columnsToRename)
 
 
 
