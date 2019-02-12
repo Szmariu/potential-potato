@@ -1,0 +1,104 @@
+---
+title: "The predicting model"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Building the model 
+
+Supposed there is a new programmer want to enter Google Play market, he/she have some ideas in some Genres, can hire professional tester for initial rating and can make Free app with ads or Paid app. All he/she cares is the number of Installs, the higher number the more profit he get.
+
+```{r results='hide', message=FALSE, warning=FALSE, include=FALSE}
+setwd('C:/Users/PC Tuan/Desktop/Github/potential-potato/data') #depend on your pc
+df_load <- read.csv('clean_googleplaystore.csv')
+library(tidyverse)
+library(dplyr)
+df_selected <- df_load %>%
+                select(c(2,5,6,9)) %>%
+                drop_na(.)
+```
+
+The selected data as below
+```{r}
+head(df_selected)
+```
+```{r}
+summary(df_selected)
+```
+
+## The distribution of current number of Installs
+
+```{r pressure, echo=FALSE}
+df_selected$Installs <- as.character(df_selected$Installs)
+df_selected$Installs <- substr(df_selected$Installs,1,nchar(df_selected$Installs)-1)
+df_selected$Installs<- as.numeric(gsub(",", "", df_selected$Installs))
+df_selected$Installs <- as.factor(df_selected$Installs)
+library(ggplot2)
+ggplot(df_selected,aes(Installs))+
+  geom_bar()+
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+## Ordinal Logistic Regression model
+Since the number of Installs in this dataset is classified as categorial value, Ordinal Logistic Regression seems to be the most suitable.
+
+```{r echo=FALSE}
+library(MASS)
+model_fit <-polr(Installs~Rating+Type+Genres, data = df_selected)
+summary(model_fit)
+summary_table <- coef(summary(model_fit))
+pval <- pnorm(abs(summary_table[, "t value"]),lower.tail = FALSE)* 2
+summary_table <- cbind(summary_table, "p value" = round(pval,3))
+```
+
+Calculating p value and filtering out those who have p value > 0.05 or have impact on the model
+```{r}
+summary_table_filtered <- as_data_frame(summary_table, rownames = 'id')
+summary_table_filtered <- summary_table_filtered %>%
+                            filter(`p value` <= 0.05)
+print.data.frame(summary_table_filtered)
+```
+
+## Explaining the model
+The basic of proportional odds model have mathematical fomulation:
+![model formula](data/modelFomula.png){width=200px}
+
+With 'J' is sum of number of factors in number of Installs (J=18) and 'M' is total number of independent variables (M=3).
+
+'j' is each factor in number of Installs, meanwhile 'i' is each independent variables, simply put: 
+
+* i =1 refers to Rating
+
+* i = 2 refers to Type 
+
+* i = 3 refers to Genres
+
+**Interpretation**:
+
+*Comments on Coefficients*: Only rating of the app have positive effect on number of installs, if the app is paid or belong to these genres below will have negative impact on its number of Installs.
+
+*Comments on intercept*: take 1|5 as example: the odd of log that the app will have only 1 person installs the app versus the odd of log many people (>1) try the app
+
+## Apply the model to our case
+Suppose again our programer have finished 2 apps with charateristic like belows:
+
+**App 1** have Rating 4 in Genres Educational and a Free app with ads
+```{r}
+new_app <- data.frame('Rating'=4,'Type'='Free','Genres'='Educational')
+round(predict(model_fit,new_app,type = "p"), 3)
+```
+
+**App 2** is rated at 3.5 and is Racing game with a price.
+```{r}
+new_app_2 <- data.frame('Rating'=3.5,'Type'='Paid','Genres'='Racing')
+round(predict(model_fit,new_app_2,type = "p"), 3)
+```
+
+**Results:** The first app may have 20% (highest chance) to get 1 million downloads while the second app has 17% (highest) to get at least 10 thounsand downloads. 
+
+If he/she knows the cost for developing the apps, then he can setup ads rate and setting price level using Expected Value calculation. 
