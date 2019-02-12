@@ -1,0 +1,43 @@
+---
+title: "Analysis of purchases of mobile applications"
+author: "Micha³ Sza³añski, Tuan Doan, Aleksandra Bednarczuk"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1. INTRODUCTION
+
+
+##### 1.1. WEB APPLICATIONS
+
+
+##### 1.2. DATASET
+
+
+The dataset about Google play store apps was downloaded from kaggle.com website (to see the source click [here](https://www.kaggle.com/lava18/google-play-store-apps?fbclid=IwAR0ovxDCXAqDkyunIhSRKqKWRbX5KXnjR33KL_RUroKBwc1dcf5D_h5572A)). 
+
+
+The dataset before cleaning had almost 11 thousand observations - mobile applications, and 13 variables - Application name, Category, Rating, Reviews, Size, Installs, Type, Price, Content Rating, Genres, Last Updated, Current version, Android version. After cleaning, the dataset remained 9367 observations and 11 variables - we rejected Category and Current version. The procedure of cleaning the data is saved and attached to the project in the file code.R.
+
+
+### 2. EXPLORATORY DATA ANALYSIS
+
+
+##### 2.1. BASIC STATISTICS
+
+
+##### 2.2. MODELLING
+
+
+
+```{r}
+
+```
+
+### 3. CONCLUSIONS
+
+
+### 4. REFERENCES
