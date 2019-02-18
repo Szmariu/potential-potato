@@ -46,11 +46,41 @@ print.data.frame(summary_table_filtered)
 
 
 #Predict value----
-#let's predict the probability of popularity that an app developer create a app with following info
+#let's predict the probability of popularity that an app developer create apps with following info
+#cost of app develop https://hackernoon.com/the-ultimate-guide-how-much-does-it-cost-to-develop-a-mobile-app-in-2018-f529a59c432
+
+#Price less than 50 (majority of paid app lie on this domain)
+df_price <- df_load %>% select(Type, Price) %>% drop_na(.) %>% filter(Type == 'Paid' & Price <=50)
+#graph
+ggplot(df_price, aes(x= Price)) +
+  geom_histogram(color ='blue', fill = 'white') +
+  theme_light()
+
+#function to calculate ad rate/ price for each app
+costCalculator <- function(result, cost){
+  result_1 <- as.data.frame(result)
+  result_1 <- result_1 %>% rownames_to_column()
+  colnames(result_1) <- c('Installs','Probabbility')
+  result_1$Installs <- as.numeric(result_1$Installs)
+  result_1$Expected_value <- result_1$Installs * result_1$Probabbility
+  print(result_1)
+  total_install <- sum(result_1$Expected_value)
+  average_cost = cost/total_install
+  cat('The total sum of expected value in total Installs is',total_install,'and the ideal ad rate/ price should be minimum at', average_cost)
+}
+#1st app costs $150 000 to develop (highest for Android app according to research(link above))
 new_app <- data.frame('Rating'=4,'Type'='Free','Genres'='Educational')
-round(predict(model_fit,new_app,type = "p"), 3)
+result1<-round(predict(model_fit,new_app,type = "p"), 3)
+result1
 #Comments: the app may have 20% (highest chance) to get 1 million downloads
-#another app
+costCalculator(result=result1,cost= 150000)
+
+
+#another app costs $200 000 to develop
 new_app_2 <- data.frame('Rating'=3.5,'Type'='Paid','Genres'='Racing')
-round(predict(model_fit,new_app_2,type = "p"), 3)
+result2<-round(predict(model_fit,new_app_2,type = "p"), 3)
+result2
 #Comments: this app have 17% (highest) to get at least 10 thounsand downloads
+costCalculator(result=result2,cost= 200000)
+#based on the distribution price's graph and use 'Herd Behavior' as guideline, the developer 
+#should set price at 0.99
