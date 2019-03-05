@@ -1,14 +1,10 @@
 ---
 title: "Analysis of purchases of mobile applications"
-author: "Micha³ Sza³añski, Tuan Doan, Aleksandra Bednarczuk"
+author: "Michaï¿½ Szaï¿½aï¿½ski, Tuan Doan, Aleksandra Bednarczuk"
 output:
-<<<<<<< Updated upstream
+  html_document: default
   pdf_document: default
-  html_document: default
-=======
-  html_document: default
-  #pdf_document: default
->>>>>>> Stashed changes
+
 ---
 
 ```{r setup, include=FALSE}
@@ -19,20 +15,11 @@ library(gridExtra)
 library(MASS)
 library(tidyverse)
 library(vcd)
-<<<<<<< Updated upstream
-
 options(scipen=999)
-
-knitr::opts_chunk$set(echo = TRUE)
-=======
 library(formatR)
-
-options(scipen=999)
-
 library(knitr)
 opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
 opts_chunk$set(echo = TRUE)
->>>>>>> Stashed changes
 ```
 
 
@@ -48,11 +35,7 @@ Mobile applications (or mobile apps) are computer programs or software applicati
 #### 1.2. RESEARCH OBJECTIVE
 
 
-<<<<<<< Updated upstream
-The purpose of our research is to discover the factors affecting the number of application installs - what determines popularity of mobile applications?
-=======
 The purpose of our research is to discover the factors affecting the number of application installs - what determines the popularity of mobile applications?
->>>>>>> Stashed changes
 
 
 At the beginning, we carry out data cleaning process and preparation of the dataset for analysis. Then we conduct a preliminary analysis and visualize basic statistics. Next, we formulate the model to inspect the factors determining the number of installs.
@@ -65,8 +48,6 @@ The dataset about Google play store apps was downloaded from kaggle.com website 
 
 
 ### 2. DATA ANALYSIS
-<<<<<<< Updated upstream
-=======
 
 
 #### 2.1. CLEANING THE DATA
@@ -199,17 +180,12 @@ grid.arrange(p1, q1, p2, q2, nrow = 2)
 a2 = filter(mainTable, mainTable$Reviews.Count < 10000)
 a3 = filter(mainTable, mainTable$Size < 120)
 a4 = filter(mainTable, mainTable$Price < 10)
->>>>>>> Stashed changes
 
 p3 <- ggplot(a3, aes(x = Size)) + geom_histogram()
 p4 <- ggplot(a4, aes(x = Price)) + geom_histogram()
 
-<<<<<<< Updated upstream
-#### 2.1. CLEANING THE DATA
-=======
 q3 <- ggplot(a3, aes(y = Size, 1)) + geom_boxplot()
 q4 <- ggplot(a4, aes(y = Price, 1)) + geom_boxplot()
->>>>>>> Stashed changes
 
 grid.arrange(p3, q3, p4, q4, nrow = 2)
 ```
@@ -281,275 +257,12 @@ ggplot(df_selected,aes(Installs))+
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Distribution of number of installs") + labs(y="Number of apps", x = "Installs")
 ```
 
-<<<<<<< Updated upstream
 ```{r include=FALSE}
 # Importing main data table, NaN are omitted (about 10% of all data)
 mainTable <- na.omit(read.csv("data/googleplaystore.csv",header=TRUE))
 # Import the ratings, NaN are omitted (about 30% of all data)
 ratingsTable <- na.omit(read.csv("data/googleplaystore_user_reviews.csv",header=TRUE))
 ```
-=======
->>>>>>> Stashed changes
-
-**Ordinal Logistic Regression model** 
-
-<<<<<<< Updated upstream
-Raw data downloaded from kaggle repository needs cleaning. After uploading the data from the csv file, NaN values were omitted. 
-=======
->>>>>>> Stashed changes
-
-```{r echo=FALSE, message=FALSE, tidy=TRUE}
-model_fit <-polr(Installs~Rating+Type+Genres, data = df_selected)
-summary(model_fit)
-summary_table <- coef(summary(model_fit))
-pval <- pnorm(abs(summary_table[, "t value"]),lower.tail = FALSE)* 2
-summary_table <- cbind(summary_table, "p value" = round(pval,3))
-```
-
-
-We calculate p-value and filter out these variables which have p-value <= 0.05 and are statistically significant at the 5% level.
-
-
-```{r echo=FALSE, message=FALSE, tidy=TRUE}
-summary_table_filtered <- as_data_frame(summary_table, rownames = 'id')
-summary_table_filtered <- summary_table_filtered %>%
-                            filter(`p value` <= 0.05)
-print.data.frame(summary_table_filtered)
-```
-
-
-**Explaining the model**
-
-
-The basic of proportional odds model has the following mathematical fomula:
-![model formula](data/modelFomula.png){width=200px}
-
-
-with 'J' being a number of levels of dependent variable Installs (J=18) and 'M' being a total number of independent variables (M=3).
-
-'j' is a single level of Installs, meanwhile 'i' is a single independent variables: 
-
-* i = 1 refers to Rating
-
-* i = 2 refers to Type 
-
-* i = 3 refers to Genres
-
-<<<<<<< Updated upstream
-Based on the summary and basic statistics we can assume that most of the mobile applications are free (8719 apps) and only 648 are paid. Because of this disproportion, we do not pay attention to the level of price for the mobile app. Instead, we use the variable Type to distinguish between free and paid apps.
-=======
->>>>>>> Stashed changes
-
-**Interpretation of the results**:
-
-<<<<<<< Updated upstream
-```{r echo=FALSE, message=FALSE, tidy=TRUE}
-str(mainTable)
-```
-=======
->>>>>>> Stashed changes
-
-*Comments on Coefficients*: The continuous variable Rating can be interpreted as follows: with one unit increase in rating of the free mobile app the log of odds of increasing the number of installs of this app increases by 0.62259 (62%). The ordinal variable Type can be interpreted as follows: with changing mobile app from free to paid the log of odds of increasing the number of installs of this app decreases by -2.03432 (-203%).
-
-<<<<<<< Updated upstream
-```{r echo=FALSE, message=FALSE, tidy=TRUE}
-summary(mainTable)
-```
-=======
->>>>>>> Stashed changes
-
-*Comments on Intercepts*: For example in case of intercept 1|5: it can be interpreted as the log of odds of having only 1 install versus having more than 1 install.
-
-After analysis of the data structure, we rename the columns to make data more readable:
-
-<<<<<<< Updated upstream
-
-```{r tidy=TRUE}
-columnsToRename = c('Reviews' = 'Reviews.Count', 'Current.Ver' = 'Current.Software.Version', 'Android.Ver' = 'Android.Version')
-mainTable <- mainTable %>% plyr::rename(columnsToRename)
-```
-
-
-Furthermore, we start the process of cleaning - fixing the data and changing the data types:
-
-
-```{r tidy=TRUE}
-# All - Setting "Varies with device" as NaN
-mainTable[mainTable == "Varies with device"] <- NA
-# Rating - Fixing outiliers
-mainTable$Rating[mainTable$Rating > 5] <- NA
-# Size - Delete M (megabytes)
-mainTable[5] <- lapply(mainTable[5], as.character)
-mainTable$Size <- substr(mainTable$Size, 1, nchar(mainTable$Size) - 1)
-# Type - Fixing the 0
-mainTable$Type[mainTable$Type == 0] <- "Free"
-# Price - Delete dollars, fix outliers
-mainTable$Price <- substring(mainTable$Price,2)
-mainTable$Price[mainTable$Price == "" | mainTable$Price == "veryone"] <- "0"
-# Content.Rating - Deleting outliers
-mainTable$Content.Rating[mainTable$Content.Rating == '' | mainTable$Content.Rating == "Unrated"] <- "Everyone"
-# Genres - Taking only the main genre 
-mainTable$Genres <- gsub(";.*","",mainTable$Genres)
-# Genres - Education and Educational are the same type of apps
-mainTable$Genres[mainTable$Genres == "Educational"] <- "Education"
-# Last.Updated - Converting to date NOT WORKING YET!
-mainTable <- mainTable[!mainTable$Last.Updated == "1.0.19",]
-mainTable$Last.Updated <- gsub(",","",mainTable$Last.Updated)
-# placeholder <- as.Date(mainTable$Last.Updated, format = "%B %d %Y", optional = TRUE)
-# Android.Version - Take only the main part, eg. 4.3
-mainTable$Android.Version <- substr(mainTable$Android.Version, 1, 3)
-# Convert to character
-for (i in c(1, 4)){
-  mainTable[i] <- lapply(mainTable[i], as.character)
-}
-# Convert to numeric 
-for (i in c(4, 5, 8)){
-  mainTable[i] <- lapply(mainTable[i], as.numeric)
-}
-# Convert to factors
-for (i in c(10, 13)){
-  mainTable[i] <- lapply(mainTable[i], as.factor)
-}
-remove(i)
-# Drop all unused factors (cool function)
-mainTable <- droplevels.data.frame(mainTable)
-# Drop the Category column
-mainTable <- mainTable[-c(2,12)]
-```
-
-
-#### 2.2. BASIC STATISTICS
-
-
-After the process of cleaning, the dataset includes 9367 observations and 11 variables. We can take another look at its structure and summary statistics:
-
-
-```{r echo=FALSE, tidy=TRUE}
-str(mainTable)
-```
-
-
-```{r echo=FALSE, tidy=TRUE}
-summary(mainTable)
-```
-
-
-The dataset contains 11 variables - 5 factors, 4 numerics and 2 characters, and 9366 observations.
-
-
-* Median rating of apps in Google Play Store is 4.3 and 50% of the apps have a rating between 4 and 4.5. We can identify outliers - apps with rating lower than 3.25.
-* Most of the apps have low number of reviews - 50% of the applications in the dataset have between 186 and 81533 reviews (with median of 5930 reviews). The highest number of reviews is 78158306.
-* Median size of apps is 16 MB. 50% of apps have the size between 6 and 37 MB. The largest app in the Google Play Store has 994 MB.
-* As we mentioned before, most of the apps are free of charge.
-
-
-```{r echo=FALSE, message=FALSE, tidy=TRUE, warning=FALSE}
-# Histograms & box plots of continuous variables
-a2 = filter(mainTable, mainTable$Reviews.Count < 10000)
-a3 = filter(mainTable, mainTable$Size < 120)
-a4 = filter(mainTable, mainTable$Price < 10)
-
-p1 <- ggplot(mainTable, aes(x = Rating)) + geom_histogram() 
-p2 <- ggplot(a2, aes(x = Reviews.Count)) + geom_histogram() 
-
-q1 <- ggplot(mainTable, aes(y = Rating, 1)) + geom_boxplot() 
-q2 <- ggplot(a2, aes(y = Reviews.Count, 1)) + geom_boxplot()
-
-grid.arrange(p1, q1, p2, q2, nrow = 2)
-```
-
-
-```{r echo=FALSE, message=FALSE, tidy=TRUE, warning=FALSE}
-# Histograms & box plots of continuous variables
-a2 = filter(mainTable, mainTable$Reviews.Count < 10000)
-a3 = filter(mainTable, mainTable$Size < 120)
-a4 = filter(mainTable, mainTable$Price < 10)
-
-p3 <- ggplot(a3, aes(x = Size)) + geom_histogram()
-p4 <- ggplot(a4, aes(x = Price)) + geom_histogram()
-
-q3 <- ggplot(a3, aes(y = Size, 1)) + geom_boxplot()
-q4 <- ggplot(a4, aes(y = Price, 1)) + geom_boxplot()
-
-grid.arrange(p3, q3, p4, q4, nrow = 2)
-```
-
-
-Interpretation of the scatter plot ???
-
-
-```{r echo=FALSE, message=FALSE, tidy=TRUE}
-# Scatter plots
-ggplot(mainTable, aes(y = Reviews.Count, x = seq(1,length(mainTable$Reviews.Count)))) + geom_point() 
-```
-
-
-Three genres with the highest number of created mobile apps are: Tools, Education and Entertainment. Those three categories are on average 2 times bigger than the other genres. It means that these applications are the most useful for mobile devices users - developers create this kind of apps because there is a high demand for them.
-
-
-```{r echo=FALSE, message=FALSE, tidy=TRUE}
-# Number of apps
-a <- factor(mainTable$Genres,levels=names(sort(table(mainTable$Genres), decreasing=TRUE)))
-ggplot(mainTable, aes(x=a)) +
-       geom_bar( ) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + ggtitle("Number of mobile apps in each genre") + labs(y="Number of apps", x = "Genres")
-```
-
-
-The highest and outstading share of paid mobile applications is in the four types of Genres: Board, Medical, Personalization and Role Playing. However, these are not the most popular types of apps - only Medical is in the top 10 of Genres. On the other hand, the categories with the highest number of applications are usually free of charge.
-
-
-```{r echo=FALSE, message=FALSE, tidy=TRUE}
-# Percentage of free/paid apps
-ggplot(mainTable, aes(fill=Type, y=1, x=Genres)) + 
-    geom_bar( stat="identity", position="fill") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(legend.position="bottom") + ggtitle("Share of free and paid mobile apps in each genre") + labs(y="%", x = "Genres")
-```
-
-
-The graph below shows the number of installs of applications in each genre. The highest percentage of high numbers of installs have such applications genres like: Action, Arcade, Casual, Communication, Music, Photography, Racing, Shoopping, Social, Strategy, Travel & Loca, Video Players & Editors and Word. In the next section we provide a model to examine the factors determining the number of installs. 
-
-
-```{r echo=FALSE, message=FALSE, tidy=TRUE}
-# How many times apps were installed in each genres
-mainTable$Installs <- factor(mainTable$Installs, levels=c("1+", "5+", "10+", "50+", "100+", "500+", "1,000+", "5,000+", "10,000+", "50,000+",  "100,000+",  "500,000+", "1,000,000+", "5,000,000+", "10,000,000+", "50,000,000+", "100,000,000+", "500,000,000+" ,"1,000,000,000+"))
-
-ggplot(mainTable, aes(fill=Installs, y=1, x=Genres)) + 
-    geom_bar( stat="identity", position="fill") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(legend.position="bottom") + ggtitle("Share of mobile apps in each genre by number of installs") + labs(y="%", x = "Genres")
-```
-
-
-```{r include=FALSE, tidy=TRUE}
-######EXPORT CLEAN DATA######
-write.csv(mainTable, file = "data/clean_googleplaystore.csv", row.names = FALSE)
-write.csv(ratingsTable, file = "data/clean_googleplaystore_user_reviews.csv", row.names = FALSE)
-```
-
-
-#### 2.3. MODELLING
-
-
-```{r results='hide', message=FALSE, warning=FALSE, include=FALSE}
-df_load <- read.csv('data/clean_googleplaystore.csv')
-df_selected <- df_load[,c(2,5,6,9)] %>%
-                drop_na(.)
-```
-
-
-Since the purpose of our research is to find the features affecting the number of installs and Installs is not continuous but ordinal variable, we decided to use **Ordinal Logistic Regression model**. We are gonna examine the impact of the ratings, type and genres of application on the number of installs.
-
-
-The most common number of installs is 1 000 000 +. The distribiution of the number of installs is plotted in the graph below. What makes the number of installs high or low? Can an app developer predict and impact it?
-
-
-```{r pressure, echo=FALSE, message=FALSE, tidy=TRUE}
-df_selected$Installs <- as.character(df_selected$Installs)
-df_selected$Installs <- substr(df_selected$Installs,1,nchar(df_selected$Installs)-1)
-df_selected$Installs<- as.numeric(gsub(",", "", df_selected$Installs))
-df_selected$Installs <- as.factor(df_selected$Installs)
-ggplot(df_selected,aes(Installs))+
-  geom_bar()+
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Distribution of number of installs") + labs(y="Number of apps", x = "Installs")
-```
-
 
 **Ordinal Logistic Regression model** 
 
@@ -601,25 +314,6 @@ with 'J' being a number of levels of dependent variable Installs (J=18) and 'M' 
 *Comments on Intercepts*: For example in case of intercept 1|5: it can be interpreted as the log of odds of having only 1 install versus having more than 1 install.
 
 
-We can make an example based on our model:
-
-Let's suppose that our mobile app developer has finished two applications with charateristic described below:
-
-**App 1** is a free app of genre Education and rating 4:
-```{r tidy=TRUE}
-new_app <- data.frame('Rating'=4,'Type'='Free','Genres'='Education')
-round(predict(model_fit,new_app,type = "p"), 3)
-```
-
-**App 2** is a paid app of genre Racing and rating 3.5:
-```{r tidy=TRUE}
-new_app_2 <- data.frame('Rating'=3.5,'Type'='Paid','Genres'='Racing')
-round(predict(model_fit,new_app_2,type = "p"), 3)
-```
-
-
-**Results:** The first app has 15,7% chance to get 10 thousand downloads while the second app has 17% chances (highest) to get that number of installs. The first app has 6,5% chances to get 10 million downloads while the second app has 4,5% chances (lower) to get that number of installs.
-=======
 We can make an example based on our model:
 
 Let's suppose that our mobile app developer has finished two applications with charateristic described below:
@@ -638,7 +332,6 @@ round(predict(model_fit,new_app_2,type = "p"), 3)
 
 
 Results: The first app has 15,7% chance to get 10 thousand downloads while the second app has 17% chances (highest) to get that number of installs. The first app has 6,5% chances to get 10 million downloads while the second app has 4,5% chances (lower) to get that number of installs.
->>>>>>> Stashed changes
 
 
 ### 3. CONCLUSIONS
