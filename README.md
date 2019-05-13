@@ -1,2 +1,2 @@
 # potential-potato
-Microeconomics project
+Google App Store - predicting game popularity based on its characteristics.
